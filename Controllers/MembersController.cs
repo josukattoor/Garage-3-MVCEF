@@ -10,22 +10,22 @@ using Garage_3_MVCEF.Models;
 
 namespace Garage_3_MVCEF.Controllers
 {
-    public class MembersController : Controller
+    public class MemberController : Controller
     {
         private readonly Garage_3_MVCEFContext _context;
 
-        public MembersController(Garage_3_MVCEFContext context)
+        public MemberController(Garage_3_MVCEFContext context)
         {
             _context = context;
         }
 
-        // GET: Members
+        // GET: Member
         public async Task<IActionResult> Index()
         {
             return View(await _context.Member.ToListAsync());
         }
 
-        // GET: Members/Details/5
+        // GET: Member/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,13 +43,13 @@ namespace Garage_3_MVCEF.Controllers
             return View(member);
         }
 
-        // GET: Members/Create
+        // GET: Member/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Members/Create
+        // POST: Member/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -58,6 +58,11 @@ namespace Garage_3_MVCEF.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (_context.Member.Any(m => m.PersonalNumber == member.PersonalNumber))
+                {
+                    ModelState.AddModelError("PersonalNumber", "This personal number is already registered.");
+                    return View(member);
+                }
                 _context.Add(member);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -65,7 +70,7 @@ namespace Garage_3_MVCEF.Controllers
             return View(member);
         }
 
-        // GET: Members/Edit/5
+        // GET: Member/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,7 +86,7 @@ namespace Garage_3_MVCEF.Controllers
             return View(member);
         }
 
-        // POST: Members/Edit/5
+        // POST: Member/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -116,7 +121,7 @@ namespace Garage_3_MVCEF.Controllers
             return View(member);
         }
 
-        // GET: Members/Delete/5
+        // GET: Member/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,7 +139,7 @@ namespace Garage_3_MVCEF.Controllers
             return View(member);
         }
 
-        // POST: Members/Delete/5
+        // POST: Member/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

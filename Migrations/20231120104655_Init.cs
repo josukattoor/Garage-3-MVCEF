@@ -20,7 +20,7 @@ namespace Garage_3_MVCEF.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonalNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProEndTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ProEndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

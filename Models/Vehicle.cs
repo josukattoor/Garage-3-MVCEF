@@ -12,7 +12,7 @@ namespace Garage_3_MVCEF.Models
 
         public string? Color { get; set; }
 
-        public int NumWheels { get; set; }
+        public int? NumWheels { get; set; }
         public DateTime ArrivalTime { get; set; }
         public Member member { get; set; }
         public int MemberID { get; set; }
