@@ -17,11 +17,12 @@ html {
 }
 
 body {
-    
     margin-bottom: 80px;
+    background-color: rgba(15, 15, 15, 1.0);
     background-image: url('/images/carimg.jpg');
     background-size: 100%;
     background-attachment: fixed;
+    background-repeat: no-repeat; /* Förhindra upprepning av bakgrundsbilden */
 }
 
 .container {
@@ -30,6 +31,7 @@ body {
     padding: 20px;
     min-height: 60vh;
     margin-top: 50px;
+    font-family: 'Open Sans', sans-serif;
 }    
 
 footer {
