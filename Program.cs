@@ -26,7 +26,7 @@ namespace Garage_3_MVCEF
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            //Update
             app.UseRouting();
 
             app.UseAuthorization();
