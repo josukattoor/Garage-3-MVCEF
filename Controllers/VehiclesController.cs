@@ -22,7 +22,7 @@ namespace Garage_3_MVCEF.Controllers
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
-            var garage_3_MVCEFContext = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.member);
+            var garage_3_MVCEFContext = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Member);
             return View(await garage_3_MVCEFContext.ToListAsync());
         }
 
@@ -36,7 +36,7 @@ namespace Garage_3_MVCEF.Controllers
 
             var vehicle = await _context.Vehicle
                 .Include(v => v.VehicleType)
-                .Include(v => v.member)
+                .Include(v => v.Member)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicle == null)
             {
@@ -49,7 +49,10 @@ namespace Garage_3_MVCEF.Controllers
         // GET: Vehicles/Create
         public IActionResult Create()
         {
-            ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id");
+            ViewBag.VehicleTypes = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName");
+
+            //ViewBag.VehicleTypes = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName", Vehicle.VehicleTypeID);
+                        //ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id");
             ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id");
             return View();
         }
@@ -59,36 +62,48 @@ namespace Garage_3_MVCEF.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RegNumber,Brand,Model,Color,NumWheels,ArrivalTime,MemberID,VehicleTypeID")] Vehicle vehicle)
+        public async Task<IActionResult> Create([Bind("Id,RegNumber,Brand,Model,Color,NumWheels,ArrivalTime,VehicleTypeID,MemberID")] Vehicle vehicle)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(vehicle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id", vehicle.VehicleTypeID);
-            ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id", vehicle.MemberID);
+            //if (ModelState.IsValid)
+            //{
+                var existingMember = await _context.Member.FirstOrDefaultAsync(m => m.PersonalNumber == vehicle.PersonalNumber);
+
+                //if (existingMember != null)
+                //{
+                //    // Associate the vehicle with the member
+                //    vehicle.Member = existingMember;
+
+                    _context.Add(vehicle);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                //}
+                //else
+                //{
+                //    ModelState.AddModelError("PersonalNumber", "Member with this PersonalNumber does not exist. Please add the member first.");
+                //}
+            //}
+
+            ViewBag.VehicleTypes = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName", vehicle.VehicleTypeID);
+
             return View(vehicle);
         }
-
         // GET: Vehicles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var vehicle = await _context.Vehicle.FindAsync(id);
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-            ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id", vehicle.VehicleTypeID);
-            ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id", vehicle.MemberID);
-            return View(vehicle);
-        }
+        //    var vehicle = await _context.Vehicle.FindAsync(id);
+        //    if (vehicle == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id", vehicle.VehicleTypeID);
+        //    ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id", vehicle.MemberID);
+        //    return View(vehicle);
+        //}
 
         // POST: Vehicles/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -123,7 +138,7 @@ namespace Garage_3_MVCEF.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["VehicleTypeID"] = new SelectList(_context.Set<VehicleType>(), "Id", "Id", vehicle.VehicleTypeID);
-            ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id", vehicle.MemberID);
+            ViewData["MemberID"] = new SelectList(_context.Member, "Id", "Id", vehicle.Member.Id);
             return View(vehicle);
         }
 
@@ -137,7 +152,7 @@ namespace Garage_3_MVCEF.Controllers
 
             var vehicle = await _context.Vehicle
                 .Include(v => v.VehicleType)
-                .Include(v => v.member)
+                .Include(v => v.Member)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicle == null)
             {
@@ -161,7 +176,22 @@ namespace Garage_3_MVCEF.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        [HttpGet]
+        public IActionResult CheckPersonalNumber(string personalNumber)
+        {
+            var existingMember = _context.Member.FirstOrDefault(m => m.PersonalNumber == personalNumber);
 
+            if (existingMember != null)
+            {
+                // Return JSON indicating that the personal number exists and provide the member ID
+                return Json(new { exists = true, memberId = existingMember.Id });
+            }
+            else
+            {
+                // Return JSON indicating that the personal number doesn't exist
+                return Json(new { exists = false });
+            }
+        }
         private bool VehicleExists(int id)
         {
             return _context.Vehicle.Any(e => e.Id == id);

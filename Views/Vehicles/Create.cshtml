@@ -4,14 +4,20 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Park your vehicle...</h1>
 
-<h4>Vehicle</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            <div class="form-group">
+                <label asp-for="PersonalNumber" class="control-label" for="personalNumberInput"></label>
+                <input asp-for="PersonalNumber" class="form-control" id="personalNumberInput" />
+                <span asp-validation-for="PersonalNumber" class="text-danger"></span>
+            </div>
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MemberID" id="memberIdInput" />
             <div class="form-group">
                 <label asp-for="RegNumber" class="control-label"></label>
                 <input asp-for="RegNumber" class="form-control" />
@@ -42,14 +48,12 @@
                 <input asp-for="ArrivalTime" class="form-control" />
                 <span asp-validation-for="ArrivalTime" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="MemberID" class="control-label"></label>
-                <select asp-for="MemberID" class ="form-control" asp-items="ViewBag.MemberID"></select>
-            </div>
+
             <div class="form-group">
                 <label asp-for="VehicleTypeID" class="control-label"></label>
-                <select asp-for="VehicleTypeID" class ="form-control" asp-items="ViewBag.VehicleTypeID"></select>
+                <select asp-for="VehicleTypeID" class="form-control" asp-items="ViewBag.VehicleTypes"></select>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -62,5 +66,60 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
+<script>
+    // Function to check if a date is in the future
+    function isFutureDate(dateString) {
+        var currentDate = new Date();
+        var inputDate = new Date(dateString);
+
+        // Compare the input date with the current date
+        return inputDate > currentDate;
+    }
+
+    // Set ArrivalTime to current time
+    document.getElementById("ArrivalTime").value = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+    // Check personal number
+    document.getElementById("personalNumberInput").addEventListener("blur", function () {
+        // Get the entered personal number
+        var personalNumber = this.value;
+
+        // Make an asynchronous request to the server to check if the personal number exists
+        fetch("/Vehicles/CheckPersonalNumber?personalNumber=" + personalNumber)
+            .then(response => response.json())
+            .then(data => {
+                debugger;
+                if (data.exists) {
+                    // If the personal number exists, set the member ID in the hidden field
+                    document.getElementById("memberIdInput").value = data.memberId;
+                } else {
+                    debugger;
+                    // If the personal number doesn't exist, show a validation message
+                    document.getElementById("personalNumberInput").setCustomValidity("Member with this personal number does not exist. Please become a member.");
+                    document.getElementById("personalNumberInput").reportValidity();
+                }
+            });
+    });
+
+    // Check ArrivalTime
+    document.getElementById("ArrivalTime").addEventListener("change", function () {
+        // Get the entered ArrivalTime
+        var arrivalTime = this.value;
+
+        // Check if the entered date is in the future
+        if (!isFutureDate(arrivalTime)) {
+            // If the date is not in the future, show a validation message
+            document.getElementById("ArrivalTime").setCustomValidity("Please enter a future date and time.");
+            document.getElementById("ArrivalTime").reportValidity();
+        } else {
+            // Clear any previous validation message
+            document.getElementById("ArrivalTime").setCustomValidity("");
+        }
+    });
+</script>
+
