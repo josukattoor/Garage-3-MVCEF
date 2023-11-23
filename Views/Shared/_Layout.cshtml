@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Garage_3_MVCEF.styles.css" asp-append-version="true" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Poppins:wght@200&family=Quicksand&family=Roboto:wght@100&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -23,17 +19,15 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Vehicles" asp-action="Create">Park</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Member" asp-action="Create">Pick Up</a>
-                        </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Member" asp-action="Create">Become a Member</a>
                         </li>
-                       
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Vehicles" asp-action="Create">Park your vehicle</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="VehicleTypes" asp-action="Create">Add new vehicletype</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -46,8 +40,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="footer-container">
-            &copy; 2023 - Garage_3_MVCEF - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> <a asp-area="" asp-controller="Home" asp-action="Privacy">Admin</a>
+        <div class="container">
+            &copy; 2023 - Garage_3_MVCEF - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
