@@ -81,45 +81,38 @@
         return inputDate > currentDate;
     }
 
-    // Set ArrivalTime to current time
-    document.getElementById("ArrivalTime").value = new Date().toISOString().slice(0, 19).replace("T", " ");
+    var currentDateTime = new Date();
+    currentDateTime.setUTCHours(currentDateTime.getUTCHours() + 1); 
+    var formattedDateTime = currentDateTime.toISOString().slice(0, 19).replace("T", " ");
 
-    // Check personal number
+    document.getElementById("ArrivalTime").value = formattedDateTime;
+
     document.getElementById("personalNumberInput").addEventListener("blur", function () {
-        // Get the entered personal number
         var personalNumber = this.value;
 
-        // Make an asynchronous request to the server to check if the personal number exists
         fetch("/Vehicles/CheckPersonalNumber?personalNumber=" + personalNumber)
             .then(response => response.json())
             .then(data => {
-                debugger;
                 if (data.exists) {
-                    // If the personal number exists, set the member ID in the hidden field
                     document.getElementById("memberIdInput").value = data.memberId;
                 } else {
-                    debugger;
-                    // If the personal number doesn't exist, show a validation message
                     document.getElementById("personalNumberInput").setCustomValidity("Member with this personal number does not exist. Please become a member.");
                     document.getElementById("personalNumberInput").reportValidity();
                 }
             });
     });
 
-    // Check ArrivalTime
     document.getElementById("ArrivalTime").addEventListener("change", function () {
-        // Get the entered ArrivalTime
         var arrivalTime = this.value;
 
-        // Check if the entered date is in the future
         if (!isFutureDate(arrivalTime)) {
-            // If the date is not in the future, show a validation message
             document.getElementById("ArrivalTime").setCustomValidity("Please enter a future date and time.");
             document.getElementById("ArrivalTime").reportValidity();
         } else {
-            // Clear any previous validation message
             document.getElementById("ArrivalTime").setCustomValidity("");
         }
     });
 </script>
+
+
 
